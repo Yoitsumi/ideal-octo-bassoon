@@ -1,0 +1,316 @@
+# for debugging, don't inline methods
+#-dontoptimize
+#-optimizationpasses 5
+
+-dontobfuscate
+-dontoptimize
+-renamesourcefileattribute SourceFile
+-keepattributes SourceFile,LineNumberTable
+-verbose
+-flattenpackagehierarchy
+
+###
+# Android config
+###
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+
+-optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/*,!code/allocation/variable
+#-optimizationpasses 5
+#-allowaccessmodification
+
+-keepattributes *Annotation*
+-keep public class com.google.vending.licensing.ILicensingService
+-keep public class com.android.vending.licensing.ILicensingService
+
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# We want to keep methods in Activity that could be used in the XML attribute onClick
+-keepclassmembers class * extends android.app.Activity {
+   public void *(android.view.View);
+}
+
+# For enumeration classes, see http://proguard.sourceforge.net/manual/examples.html#enumerations
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
+
+-dontnote android.annotation.**
+-dontnote com.android.vending.licensing.**
+-dontnote com.google.vending.licensing.**
+-dontwarn android.support.**
+-dontnote android.support.**
+
+# keep setters in Views so that animations can still work.
+# see http://proguard.sourceforge.net/manual/examples.html#beans
+-keepclassmembers public class * extends android.view.View {
+   void set*(***);
+   *** get*();
+}
+
+-keepclassmembers class **.R$* {
+    public static <fields>;
+}
+
+###
+# Scala proguard config
+###
+-dontnote scala.ScalaObject
+-dontnote org.xml.sax.EntityResolver
+-dontnote scala.concurrent.forkjoin.**
+-dontwarn scala.beans.ScalaBeanInfo
+-dontwarn scala.concurrent.**
+-dontwarn scala.reflect.**
+-dontwarn scala.sys.process.package$
+
+-dontwarn **$$anonfun$*
+-dontwarn scala.collection.immutable.RedBlack$Empty
+-dontwarn scala.tools.**,plugintemplate.**
+
+-keep public class scala.reflect.ScalaSignature
+# This is gone in 2.11
+-keep public interface scala.ScalaObject
+
+-keepclassmembers class * {
+    ** MODULE$;
+}
+
+-keep class scala.collection.SeqLike {
+    public java.lang.String toString();
+}
+
+-keepclassmembernames class scala.concurrent.forkjoin.ForkJoinPool {
+    long eventCount;
+    int  workerCounts;
+    int  runControl;
+    scala.concurrent.forkjoin.ForkJoinPool$WaitQueueNode syncStack;
+    scala.concurrent.forkjoin.ForkJoinPool$WaitQueueNode spareStack;
+}
+
+-keepclassmembernames class scala.concurrent.forkjoin.ForkJoinWorkerThread {
+    int base;
+    int sp;
+    int runState;
+}
+
+-keepclassmembernames class scala.concurrent.forkjoin.ForkJoinTask {
+    int status;
+}
+
+-keepclassmembernames class scala.concurrent.forkjoin.LinkedTransferQueue {
+    scala.concurrent.forkjoin.LinkedTransferQueue$PaddedAtomicReference head;
+    scala.concurrent.forkjoin.LinkedTransferQueue$PaddedAtomicReference tail;
+    scala.concurrent.forkjoin.LinkedTransferQueue$PaddedAtomicReference cleanMe;
+}
+# Keep Android backend
+-keep class com.badlogic.gdx.backends.android.** { *; }
+
+-keep public class com.badlogic.gdx.backends.android.AndroidVisibilityListener {
+ public void createListener(com.badlogic.gdx.backends.android.AndroidApplication);
+}
+
+# Port from proguard-android.txt
+
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontoptimize
+-dontpreverify
+
+-keepattributes *Annotation*
+-keep public class com.google.vending.licensing.ILicensingService
+-keep public class com.android.vending.licensing.ILicensingService
+
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keepclassmembers public class * extends android.view.View {
+   void set*(***);
+   *** get*();
+}
+
+-keepclassmembers class * extends android.app.Activity {
+   public void *(android.view.View);
+}
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+} 
+
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+} 
+
+-keepclassmembers class **.R$* {
+    public static <fields>;
+} 
+
+-dontwarn android.support.**
+
+# Port from proguard-project.txt of Libgdx template
+
+-dontwarn com.badlogic.gdx.backends.android.AndroidFragmentApplication
+
+-keepclassmembers class com.badlogic.gdx.backends.android.AndroidInput* {
+   <init>(com.badlogic.gdx.Application, android.content.Context, java.lang.Object, com.badlogic.gdx.backends.android.AndroidApplicationConfiguration);
+}
+
+# view AndroidManifest.xml #generated:15
+-keep class android.test.InstrumentationTestRunner { <init>(...); }
+
+# view AndroidManifest.xml #generated:7
+-keep class com.github.yoitsumi.konstruktor.Main { <init>(...); }
+
+## Entry point
+
+-keep public class com.github.yoitsumi.konstruktor.Main
+
+## LibGDX
+
+# keep used
+
+# This needs also descriptor classes
+-keep public class com.badlogic.gdx.Screen
+-keep public class com.badlogic.gdx.Application
+-keep public class com.badlogic.gdx.ApplicationListener
+-keep public class com.badlogic.gdx.LifecycleListener
+-keep public class com.badlogic.gdx.InputProcessor
+-keep public class com.badlogic.gdx.files.FileHandle
+-keep public class com.badlogic.gdx.Files$FileType
+-keep public class com.badlogic.gdx.Graphics$DisplayMode
+-keep public class com.badlogic.gdx.Input$TextInputListener
+-keep public class com.badlogic.gdx.Input$Peripheral
+-keep public class com.badlogic.gdx.Input$Orientation
+-keep public class com.badlogic.gdx.Net$HttpRequest
+-keep public class com.badlogic.gdx.Net$HttpResponseListener
+-keep public class com.badlogic.gdx.Net$Protocol
+-keep public class com.badlogic.gdx.net.SocketHints
+-keep public class com.badlogic.gdx.net.ServerSocketHints
+-keep public class com.badlogic.gdx.utils.Array
+-keep public class com.badlogic.gdx.audio.Music$OnCompletionListener
+-keep public class com.badlogic.gdx.graphics.Pixmap
+
+## Scala
+
+# Fix accesses to class members by means of introspection
+-keepclassmembernames class scala.concurrent.forkjoin.ForkJoinPool {
+    ** ctl;
+    ** stealCount;
+    ** plock;
+    ** qlock;
+    ** indexSeed;
+    ** parkBlocker;
+}
+-keepclassmembernames class scala.concurrent.forkjoin.ForkJoinPool$WorkQueue {
+    ** qlock;
+}
+-keepclassmembernames class scala.concurrent.forkjoin.ForkJoinTask {
+    ** status;
+}
+-keepclassmembernames class scala.concurrent.forkjoin.LinkedTransferQueue {
+    ** head;
+    ** tail;
+    ** sweepVotes;
+}
+-keepclassmembernames class scala.concurrent.forkjoin.LinkedTransferQueue$Node {
+    ** item;
+    ** next;
+    ** waiter;
+}
+
+# See bug https://issues.scala-lang.org/browse/SI-5397
+-keep class scala.collection.SeqLike { public protected *; }
+# This needs also descriptor classes
+-keep public class scala.Function1
+-keep public class scala.Function2
+-keep public class scala.collection.GenSeq
+-keep public class scala.collection.generic.CanBuildFrom
+-keep public class scala.math.Ordering
+
+# port from Libgdx template
+
+-verbose
+
+-dontwarn com.badlogic.gdx.utils.GdxBuild
+-dontwarn com.badlogic.gdx.physics.box2d.utils.Box2DBuild
+-dontwarn com.badlogic.gdx.jnigen.BuildTarget*
+
+-keepclassmembers class com.badlogic.gdx.physics.box2d.World {
+   boolean contactFilter(long, long);
+   void    beginContact(long);
+   void    endContact(long);
+   void    preSolve(long, long);
+   void    postSolve(long, long);
+   boolean reportFixture(long);
+   float   reportRayFixture(long, float, float, float, float, float);
+}
+
+# see https://github.com/ajhager/libgdx-sbt-project.g8/issues/85
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+# Keep Android backend
+-keep class com.badlogic.gdx.backends.android.** { *; }
+
+-keep public class com.badlogic.gdx.backends.android.AndroidVisibilityListener {
+ public void createListener(com.badlogic.gdx.backends.android.AndroidApplication);
+}
+
+# Port from proguard-android.txt
+
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontoptimize
+-dontpreverify
+
+-keepattributes *Annotation*
+-keep public class com.google.vending.licensing.ILicensingService
+-keep public class com.android.vending.licensing.ILicensingService
+
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keepclassmembers public class * extends android.view.View {
+   void set*(***);
+   *** get*();
+}
+
+-keepclassmembers class * extends android.app.Activity {
+   public void *(android.view.View);
+}
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+} 
+
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+} 
+
+-keepclassmembers class **.R$* {
+    public static <fields>;
+} 
+
+-dontwarn android.support.**
+
+# Port from proguard-project.txt of Libgdx template
+
+-dontwarn com.badlogic.gdx.backends.android.AndroidFragmentApplication
+
+-keepclassmembers class com.badlogic.gdx.backends.android.AndroidInput* {
+   <init>(com.badlogic.gdx.Application, android.content.Context, java.lang.Object, com.badlogic.gdx.backends.android.AndroidApplicationConfiguration);
+}
